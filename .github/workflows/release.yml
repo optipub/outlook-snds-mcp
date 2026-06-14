@@ -1,7 +1,12 @@
 name: Build and Release MCPB
 
-# Builds the .mcpb bundle and attaches it to a GitHub Release whenever you
-# push a version tag like v1.0.0 (or publish a release manually).
+# On a version tag (e.g. v1.0.0) this:
+#   1. builds the .mcpb bundle
+#   2. attaches it to a GitHub Release
+#   3. publishes the server to the MCP Registry (hash + metadata computed here,
+#      authenticated via GitHub OIDC — no secrets, no manual SHA needed)
+# It can also be run manually (workflow_dispatch) to produce a build artifact
+# only; the release + registry steps run on tags.
 
 on:
   push:
@@ -10,19 +15,20 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: write   # create/attach GitHub Releases
+  id-token: write   # OIDC auth for the MCP Registry
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: "20"
+          node-version: "lts/*"
 
       - name: Validate manifest
         run: npx --yes @anthropic-ai/mcpb validate manifest.json
@@ -45,3 +51,30 @@ jobs:
         with:
           files: outlook-snds.mcpb
           generate_release_notes: true
+
+      # ---- Publish to the MCP Registry (tags only) ----
+
+      - name: Fill server.json (version, asset URL, SHA-256)
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          VERSION="${TAG#v}"
+          URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/outlook-snds.mcpb"
+          SHA="$(sha256sum outlook-snds.mcpb | awk '{print $1}')"
+          jq --arg v "$VERSION" --arg id "$URL" --arg sha "$SHA" \
+            '.version=$v | .packages[0].identifier=$id | .packages[0].fileSha256=$sha' \
+            server.json > server.tmp && mv server.tmp server.json
+          echo "Published metadata:"; cat server.json
+
+      - name: Install mcp-publisher
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
+
+      - name: Authenticate to MCP Registry (GitHub OIDC)
+        if: startsWith(github.ref, 'refs/tags/')
+        run: ./mcp-publisher login github-oidc
+
+      - name: Publish to MCP Registry
+        if: startsWith(github.ref, 'refs/tags/')
+        run: ./mcp-publisher publish

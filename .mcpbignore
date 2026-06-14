@@ -4,6 +4,7 @@
 .gitignore
 .mcpbignore
 CONTRIBUTING.md
+server.json
 node_modules/
 package-lock.json
 *.mcpb
