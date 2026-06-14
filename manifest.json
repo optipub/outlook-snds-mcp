@@ -1,0 +1,36 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/mcpb/main/schemas/mcpb-manifest-latest.schema.json",
+  "manifest_version": "0.3",
+  "name": "outlook-snds",
+  "display_name": "Outlook SNDS",
+  "version": "1.0.0",
+  "description": "Access Outlook.com Smart Network Data Services (SNDS) IP Data and IP Status reports via the OAuth-secured REST API.",
+  "long_description": "Exposes the Microsoft Outlook.com Smart Network Data Services (SNDS) REST API as MCP tools. Sign in once with your Microsoft account (OAuth 2.0 authorization-code + PKCE flow with a loopback localhost redirect, using the SNDS portal's public client against the consumers tenant); tokens are cached and refreshed automatically. Then pull the IP Data report (per-IP traffic and reputation metrics: RCPT/DATA commands, message recipients, spam filter result, complaint rate, trap hits, sample HELO/MAIL, comments) for the most recent day or a specific date and IP, and the IP Status report (IPs in an abnormal state such as Blocked / Bot / Junked).",
+  "author": {
+    "name": "Kyle Renfrow",
+    "email": "kyle@optipub.com"
+  },
+  "license": "MIT",
+  "keywords": ["outlook", "snds", "deliverability", "email", "reputation", "microsoft", "ip-reputation", "postmaster"],
+  "server": {
+    "type": "node",
+    "entry_point": "server/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/server/index.js"]
+    }
+  },
+  "tools": [
+    { "name": "snds_authenticate", "description": "Sign in to Outlook SNDS via Microsoft-account OAuth (opens the browser)." },
+    { "name": "snds_auth_status", "description": "Show current SNDS sign-in status, account, and token expiry." },
+    { "name": "snds_sign_out", "description": "Delete the cached SNDS tokens (sign out)." },
+    { "name": "get_data_report", "description": "Get the SNDS IP Data report (most recent, or by date and optional IPv4)." },
+    { "name": "get_ip_status", "description": "Get the SNDS IP Status report for the IPs you own." }
+  ],
+  "compatibility": {
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": {
+      "node": ">=18.0.0"
+    }
+  }
+}

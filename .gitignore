@@ -1,0 +1,17 @@
+# Build output
+*.mcpb
+
+# Dependencies (none are required at runtime; this is for tooling only)
+node_modules/
+package-lock.json
+
+# Local token cache (should never be committed)
+.snds-mcp/
+tokens.json
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
