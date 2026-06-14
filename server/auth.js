@@ -199,7 +199,7 @@ function interactiveLogin() {
         scope: SCOPE,
       }).then((tok) => {
         const rec = storeTokenResponse(tok, loadCache());
-        reply(htmlPage('Signed in to SNDS', `You're authenticated${rec.account ? ` as <b>${rec.account}</b>` : ''}. You can close this tab and return to Cowork.`));
+        reply(htmlPage('Signed in to SNDS', `You're authenticated${rec.account ? ` as <b>${rec.account}</b>` : ''}. You can close this tab and return to your assistant.`));
         done(() => resolve(rec));
       }).catch((e) => {
         reply(htmlPage('Token exchange failed', e.message));

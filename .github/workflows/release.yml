@@ -33,6 +33,14 @@ jobs:
       - name: Validate manifest
         run: npx --yes @anthropic-ai/mcpb validate manifest.json
 
+      - name: Stamp manifest version from tag
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          VERSION="${TAG#v}"
+          jq --arg v "$VERSION" '.version=$v' manifest.json > m.tmp && mv m.tmp manifest.json
+          echo "manifest version -> $VERSION"
+
       - name: Pack bundle
         run: npx --yes @anthropic-ai/mcpb pack . outlook-snds.mcpb
 
