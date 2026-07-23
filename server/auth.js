@@ -137,7 +137,11 @@ function openBrowser(url) {
     if (process.platform === 'darwin') {
       spawn('open', [url], { stdio: 'ignore', detached: true }).unref();
     } else if (process.platform === 'win32') {
-      spawn('cmd', ['/c', 'start', '', url], { stdio: 'ignore', detached: true }).unref();
+      // Avoid `cmd /c start` — it truncates URLs at `&`.
+      spawn('rundll32', ['url.dll,FileProtocolHandler', url], {
+        stdio: 'ignore',
+        detached: true,
+      }).unref();
     } else {
       spawn('xdg-open', [url], { stdio: 'ignore', detached: true }).unref();
     }

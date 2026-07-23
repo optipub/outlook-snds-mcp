@@ -14,7 +14,7 @@ const auth = require('./auth');
 const snds = require('./snds');
 
 const SERVER_NAME = 'outlook-snds';
-const SERVER_VERSION = '1.0.0';
+const SERVER_VERSION = '1.0.4';
 const PROTOCOL_VERSION = '2025-06-18';
 
 /* ----------------------------------- tools ----------------------------------- */

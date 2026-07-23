@@ -3,7 +3,7 @@
   "manifest_version": "0.3",
   "name": "outlook-snds",
   "display_name": "Outlook SNDS",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "Access Outlook.com Smart Network Data Services (SNDS) IP Data and IP Status reports via the OAuth-secured REST API.",
   "long_description": "Exposes the Microsoft Outlook.com Smart Network Data Services (SNDS) REST API as MCP tools. Sign in once with your Microsoft account (OAuth 2.0 authorization-code + PKCE flow with a loopback localhost redirect, using the SNDS portal's public client against the consumers tenant); tokens are cached and refreshed automatically. Then pull the IP Data report (per-IP traffic and reputation metrics: RCPT/DATA commands, message recipients, spam filter result, complaint rate, trap hits, sample HELO/MAIL, comments) for the most recent day or a specific date and IP, and the IP Status report (IPs in an abnormal state such as Blocked / Bot / Junked).",
   "author": {

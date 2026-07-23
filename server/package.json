@@ -1,6 +1,6 @@
 {
   "name": "outlook-snds-mcp",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "Outlook SNDS MCP server (stdio, zero dependencies)",
   "main": "index.js",
   "type": "commonjs",
